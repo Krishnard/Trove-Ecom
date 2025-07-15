@@ -1,6 +1,5 @@
 package com.example.demo.Gateway;
 
-import com.example.demo.DTO.AllProductResponseDTO;
 import com.example.demo.DTO.ProductDTO;
 import com.example.demo.DTO.SingleProductResponseDTO;
 import com.example.demo.Gateway.API.ProductAPI;
@@ -17,9 +16,12 @@ public class ProductGateway implements IProductGateway{
 
     private ProductAPI productAPI;
 
-    public ProductGateway(ProductAPI productAPI) {
+    public ProductGateway(ProductAPI productAPI, OkHttpProductService okHttpProductService) {
         this.productAPI = productAPI;
+        this.okHttpProductService = okHttpProductService;
     }
+    
+    private final OkHttpProductService okHttpProductService;
 
     @Override
     public List<ProductDTO> getSingleProduct(int id) throws IOException {
@@ -53,29 +55,35 @@ public class ProductGateway implements IProductGateway{
     
     }
 
+//    @Override
+//    public List<ProductDTO> getAllProducts() throws IOException {
+//        AllProductResponseDTO allProductResponseDTO = this.productAPI.getAllProducts().execute().body();
+//
+//        if (allProductResponseDTO == null) {
+//            throw new IOException("Failed to fetch all products.");
+//        }
+//
+//        return allProductResponseDTO.getProducts().stream()
+//                .map(p -> ProductDTO.builder()
+//                        .id(p.getId())
+//                        .title(p.getTitle())
+//                        .price(p.getPrice())
+//                        .brand(p.getBrand())
+//                        .model(p.getModel())
+//                        .color(p.getColor())
+//                        .category(p.getCategory())
+//                        .discount(p.getDiscount())
+//                        .image(p.getImage())
+//                        .description(p.getDescription())
+//                        .onSale(p.getOnSale())
+//                        .popular(p.getPopular())
+//                        .build())
+//                .toList();
+//    }
+    
+    
     @Override
-    public List<ProductDTO> getAllProducts() throws IOException {
-        AllProductResponseDTO allProductResponseDTO = this.productAPI.getAllProducts().execute().body();
-
-        if (allProductResponseDTO == null) {
-            throw new IOException("Failed to fetch all products.");
-        }
-
-        return allProductResponseDTO.getProducts().stream()
-                .map(p -> ProductDTO.builder()
-                        .id(p.getId())
-                        .title(p.getTitle())
-                        .price(p.getPrice())
-                        .brand(p.getBrand())
-                        .model(p.getModel())
-                        .color(p.getColor())
-                        .category(p.getCategory())
-                        .discount(p.getDiscount())
-                        .image(p.getImage())
-                        .description(p.getDescription())
-                        .onSale(p.getOnSale())
-                        .popular(p.getPopular())
-                        .build())
-                .toList();
+    public List<ProductDTO> getAllProducts() throws IOException{
+        return okHttpProductService.getAllProducts();
     }
 }
